@@ -67,7 +67,12 @@ for arq in arquivos_dat:
         continue
         
     P_N = counts / total_eventos
+    soma_probabilidades = np.sum(P_N)
+    status_sanidade = "OK" if np.isclose(soma_probabilidades, 1.0, atol=1e-4) else f"FALHA (Soma={soma_probabilidades:.4f})"
     media_N = np.sum(N_vals * P_N)
+
+    # Log detalhado por arquivo processado
+    log_print(f"Sistema: {sistema:<3} | Din: {dinamica:<4} | eCM: {ecm:<5} GeV | Pt: {pt_folder:<12} | Obs: {observavel:<18} | Eta: {sufixo:<5} | <N>: {media_N:<6.2f} | Sanidade P(N)=1: {status_sanidade}")
 
     for n, c, pn in zip(N_vals, counts, P_N):
         registros.append({

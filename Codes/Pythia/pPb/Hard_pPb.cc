@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
             in_eta[5] = (fabs(eta) < 5.0);
             in_eta[6] = (fabs(eta) < 6.0);
             in_eta[7] = (fabs(eta) < 7.0);
-            in_eta[8] = (eta > 3.1 && eta < 5.0); // Asym (ajuste se necessário para -3.1 a 5.0)
+            in_eta[8] = (eta > -3.1 && eta < 5.0); // Asym (ajuste se necessário para -3.1 a 5.0)
 
             // --- 1. Charm Total ---
             if (abs(pythia.event[i].id()) == 4)
@@ -236,23 +236,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    // Normalização do dN/deta por número de eventos aceitos
-    if (nAcceptedEvents > 0)
-    {
-        double norm = 1.0 / double(nAcceptedEvents);
-        for (int i = 0; i < 9; ++i)
-        {
-            dNeta_charm_global[i] *= norm;
-            dNeta_charm_pt5[i] *= norm;
-            dNeta_charm_pt10[i] *= norm;
-            dNeta_parton_global[i] *= norm;
-            dNeta_parton_pt5[i] *= norm;
-            dNeta_parton_pt10[i] *= norm;
-            dNeta_dmeson_global[i] *= norm;
-            dNeta_dmeson_pt5[i] *= norm;
-            dNeta_dmeson_pt10[i] *= norm;
-        }
-    }
 
     // Salvamento estruturado nas pastas de pT
     std::string baseOut = "../../Output/pPb/Hard_pPb/eCM_" + eCM_str + "GeV/";
