@@ -74,222 +74,235 @@ int main(int argc, char *argv[])
   }
   cout << "Pythia inicializado com sucesso." << endl;
 
-  Hist histcharmTotal0(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal1(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal2(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal3(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal4(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal5(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal6(" ", 100, -0.5, 99.5);
-  Hist histcharmTotal7(" ", 100, -0.5, 99.5);
-  Hist histcharmTotalAsym(" ", 100, -0.5, 99.5);
+  // =========================================================================
+  // 1. HISTOGRAMAS DE MULTIPLICIDADE POR EVENTO P(N)
+  // 9 faixas de eta (0-7 e Asym) para os 3 cenários de pT
+  // =========================================================================
+  Hist mult_charm_global[9], mult_charm_pt5[9], mult_charm_pt10[9];
+  Hist mult_parton_global[9], mult_parton_pt5[9], mult_parton_pt10[9];
+  Hist mult_dmeson_global[9], mult_dmeson_pt5[9], mult_dmeson_pt10[9];
 
-  Hist histcFinalPartonLevel0(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel1(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel2(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel3(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel4(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel5(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel6(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevel7(" ", 100, -0.5, 99.5);
-  Hist histcFinalPartonLevelAsym(" ", 100, -0.5, 99.5);
+  // =========================================================================
+  // 2. HISTOGRAMAS DE dN/deta (Distribuição diferencial)
+  // =========================================================================
+  Hist dNeta_charm_global[9], dNeta_charm_pt5[9], dNeta_charm_pt10[9];
+  Hist dNeta_parton_global[9], dNeta_parton_pt5[9], dNeta_parton_pt10[9];
+  Hist dNeta_dmeson_global[9], dNeta_dmeson_pt5[9], dNeta_dmeson_pt10[9];
 
-  Hist histDmeson0(" ", 100, -0.5, 99.5);
-  Hist histDmeson1(" ", 100, -0.5, 99.5);
-  Hist histDmeson2(" ", 100, -0.5, 99.5);
-  Hist histDmeson3(" ", 100, -0.5, 99.5);
-  Hist histDmeson4(" ", 100, -0.5, 99.5);
-  Hist histDmeson5(" ", 100, -0.5, 99.5);
-  Hist histDmeson6(" ", 100, -0.5, 99.5);
-  Hist histDmeson7(" ", 100, -0.5, 99.5);
-  Hist histDmesonAsym(" ", 100, -0.5, 99.5);
+  for (int i = 0; i < 9; ++i)
+  {
+    // Multiplicidade (eixo X de 0 a 100 partículas por evento)
+    mult_charm_global[i] = Hist(" ", 100, -0.5, 99.5);
+    mult_charm_pt5[i] = Hist(" ", 100, -0.5, 99.5);
+    mult_charm_pt10[i] = Hist(" ", 100, -0.5, 99.5);
+
+    mult_parton_global[i] = Hist(" ", 100, -0.5, 99.5);
+    mult_parton_pt5[i] = Hist(" ", 100, -0.5, 99.5);
+    mult_parton_pt10[i] = Hist(" ", 100, -0.5, 99.5);
+
+    mult_dmeson_global[i] = Hist(" ", 100, -0.5, 99.5);
+    mult_dmeson_pt5[i] = Hist(" ", 100, -0.5, 99.5);
+    mult_dmeson_pt10[i] = Hist(" ", 100, -0.5, 99.5);
+
+    // dN/deta (eixo X de rapidez de -10 a 10)
+    dNeta_charm_global[i] = Hist(" ", 100, -10.0, 10.0);
+    dNeta_charm_pt5[i] = Hist(" ", 100, -10.0, 10.0);
+    dNeta_charm_pt10[i] = Hist(" ", 100, -10.0, 10.0);
+
+    dNeta_parton_global[i] = Hist(" ", 100, -10.0, 10.0);
+    dNeta_parton_pt5[i] = Hist(" ", 100, -10.0, 10.0);
+    dNeta_parton_pt10[i] = Hist(" ", 100, -10.0, 10.0);
+
+    dNeta_dmeson_global[i] = Hist(" ", 100, -10.0, 10.0);
+    dNeta_dmeson_pt5[i] = Hist(" ", 100, -10.0, 10.0);
+    dNeta_dmeson_pt10[i] = Hist(" ", 100, -10.0, 10.0);
+  }
 
   int nEvent = 10000; // 1000000;
+  int nAcceptedEvents = 0;
 
   for (int iEvent = 0; iEvent < nEvent; ++iEvent)
   {
     if (!pythia.next())
       continue;
 
-    // Imprime a contagem a cada 1000 eventos
-    if ((iEvent + 1) % 1000 == 0)
-    {
-      std::cout << "Processados " << (iEvent + 1) << " / " << nEvent << " eventos..." << std::endl;
-    }
+    nAcceptedEvents++;
 
-    int ncharmTotal0 = 0;
-    int ncharmTotal1 = 0;
-    int ncharmTotal2 = 0;
-    int ncharmTotal3 = 0;
-    int ncharmTotal4 = 0;
-    int ncharmTotal5 = 0;
-    int ncharmTotal6 = 0;
-    int ncharmTotal7 = 0;
-    int ncharmTotalAsym = 0;
-
-    int ncFinalPartonLevel0 = 0;
-    int ncFinalPartonLevel1 = 0;
-    int ncFinalPartonLevel2 = 0;
-    int ncFinalPartonLevel3 = 0;
-    int ncFinalPartonLevel4 = 0;
-    int ncFinalPartonLevel5 = 0;
-    int ncFinalPartonLevel6 = 0;
-    int ncFinalPartonLevel7 = 0;
-    int ncFinalPartonLevelAsym = 0;
-
-    int nDmeson0 = 0;
-    int nDmeson1 = 0;
-    int nDmeson2 = 0;
-    int nDmeson3 = 0;
-    int nDmeson4 = 0;
-    int nDmeson5 = 0;
-    int nDmeson6 = 0;
-    int nDmeson7 = 0;
-    int nDmesonAsym = 0;
+    // Contadores temporários por evento para multiplicidade
+    int n_charm_glob[9] = {0}, n_charm_pt5[9] = {0}, n_charm_pt10[9] = {0};
+    int n_parton_glob[9] = {0}, n_parton_pt5[9] = {0}, n_parton_pt10[9] = {0};
+    int n_dmeson_glob[9] = {0}, n_dmeson_pt5[9] = {0}, n_dmeson_pt10[9] = {0};
 
     for (int i = 0; i < pythia.event.size(); ++i)
     {
+      double eta = pythia.event[i].eta();
+      double pT = pythia.event[i].pT();
 
+      // Condições de rapidez (0 a 7 e Asym)
+      bool in_eta[9];
+      in_eta[0] = (fabs(eta) < 0.5);
+      in_eta[1] = (fabs(eta) < 1.0);
+      in_eta[2] = (fabs(eta) < 2.0);
+      in_eta[3] = (fabs(eta) < 3.0);
+      in_eta[4] = (fabs(eta) < 4.0);
+      in_eta[5] = (fabs(eta) < 5.0);
+      in_eta[6] = (fabs(eta) < 6.0);
+      in_eta[7] = (fabs(eta) < 7.0);
+      in_eta[8] = (eta > 3.1 && eta < 5.0); // Asym (ajuste se necessário para -3.1 a 5.0)
+
+      // --- 1. Charm Total ---
       if (abs(pythia.event[i].id()) == 4)
       {
-        double eta = pythia.event[i].eta();
-        if (fabs(eta) < 0.5)
-          ++ncharmTotal0;
-        if (fabs(eta) < 1.0)
-          ++ncharmTotal1;
-        if (fabs(eta) < 2.0)
-          ++ncharmTotal2;
-        if (fabs(eta) < 3.0)
-          ++ncharmTotal3;
-        if (fabs(eta) < 4.0)
-          ++ncharmTotal4;
-        if (fabs(eta) < 5.0)
-          ++ncharmTotal5;
-        if (fabs(eta) < 6.0)
-          ++ncharmTotal6;
-        if (fabs(eta) < 7.0)
-          ++ncharmTotal7;
-        if (eta > 3.1 && eta < 5.0)
-          ++ncharmTotalAsym;
+        for (int idx = 0; idx < 9; ++idx)
+        {
+          if (in_eta[idx])
+          {
+            n_charm_glob[idx]++;
+            if (pT > 5.0)
+              n_charm_pt5[idx]++;
+            if (pT > 10.0)
+              n_charm_pt10[idx]++;
+
+            // Preenche dN/deta diretamente por partícula
+            dNeta_charm_global[idx].fill(eta);
+            if (pT > 5.0)
+              dNeta_charm_pt5[idx].fill(eta);
+            if (pT > 10.0)
+              dNeta_charm_pt10[idx].fill(eta);
+          }
+        }
       }
 
-      if (pythia.event[i].isFinalPartonLevel() &&
-          abs(pythia.event[i].id()) == 4)
+      // --- 2. Final Parton Level Charm ---
+      if (pythia.event[i].isFinalPartonLevel() && abs(pythia.event[i].id()) == 4)
       {
-        double eta = pythia.event[i].eta();
-        if (fabs(eta) < 0.5)
-          ++ncFinalPartonLevel0;
-        if (fabs(eta) < 1.0)
-          ++ncFinalPartonLevel1;
-        if (fabs(eta) < 2.0)
-          ++ncFinalPartonLevel2;
-        if (fabs(eta) < 3.0)
-          ++ncFinalPartonLevel3;
-        if (fabs(eta) < 4.0)
-          ++ncFinalPartonLevel4;
-        if (fabs(eta) < 5.0)
-          ++ncFinalPartonLevel5;
-        if (fabs(eta) < 6.0)
-          ++ncFinalPartonLevel6;
-        if (fabs(eta) < 7.0)
-          ++ncFinalPartonLevel7;
-        if (eta > -3.1 && eta < 5.0)
-          ++ncFinalPartonLevelAsym;
+        for (int idx = 0; idx < 9; ++idx)
+        {
+          if (in_eta[idx])
+          {
+            n_parton_glob[idx]++;
+            if (pT > 5.0)
+              n_parton_pt5[idx]++;
+            if (pT > 10.0)
+              n_parton_pt10[idx]++;
+
+            dNeta_parton_global[idx].fill(eta);
+            if (pT > 5.0)
+              dNeta_parton_pt5[idx].fill(eta);
+            if (pT > 10.0)
+              dNeta_parton_pt10[idx].fill(eta);
+          }
+        }
       }
 
-      if (pythia.event[i].isFinal() &&
-          isCharmHadron(pythia.event[i].id()))
+      // --- 3. D Mesons ---
+      if (pythia.event[i].isFinal() && isCharmHadron(pythia.event[i].id()))
       {
-        double eta = pythia.event[i].eta();
-        if (fabs(eta) < 0.5)
-          ++nDmeson0;
-        if (fabs(eta) < 1.0)
-          ++nDmeson1;
-        if (fabs(eta) < 2.0)
-          ++nDmeson2;
-        if (fabs(eta) < 3.0)
-          ++nDmeson3;
-        if (fabs(eta) < 4.0)
-          ++nDmeson4;
-        if (fabs(eta) < 5.0)
-          ++nDmeson5;
-        if (fabs(eta) < 6.0)
-          ++nDmeson6;
-        if (fabs(eta) < 7.0)
-          ++nDmeson7;
-        if (eta > -3.1 && eta < 5.0)
-          ++nDmesonAsym;
+        for (int idx = 0; idx < 9; ++idx)
+        {
+          if (in_eta[idx])
+          {
+            n_dmeson_glob[idx]++;
+            if (pT > 5.0)
+              n_dmeson_pt5[idx]++;
+            if (pT > 10.0)
+              n_dmeson_pt10[idx]++;
 
-        // int id = pythia.event[i].id();
-        // cout << "Hádron com charm encontrado: " << id << " - " << pythia.event[i].name() << endl;
+            dNeta_dmeson_global[idx].fill(eta);
+            if (pT > 5.0)
+              dNeta_dmeson_pt5[idx].fill(eta);
+            if (pT > 10.0)
+              dNeta_dmeson_pt10[idx].fill(eta);
+          }
+        }
       }
     }
 
-    histcharmTotal0.fill(ncharmTotal0);
-    histcharmTotal1.fill(ncharmTotal1);
-    histcharmTotal2.fill(ncharmTotal2);
-    histcharmTotal3.fill(ncharmTotal3);
-    histcharmTotal4.fill(ncharmTotal4);
-    histcharmTotal5.fill(ncharmTotal5);
-    histcharmTotal6.fill(ncharmTotal6);
-    histcharmTotal7.fill(ncharmTotal7);
-    histcharmTotalAsym.fill(ncharmTotalAsym);
+    // Preenche os histogramas de multiplicidade ao final de cada evento
+    for (int idx = 0; idx < 9; ++idx)
+    {
+      mult_charm_global[idx].fill(n_charm_glob[idx]);
+      mult_charm_pt5[idx].fill(n_charm_pt5[idx]);
+      mult_charm_pt10[idx].fill(n_charm_pt10[idx]);
 
-    histcFinalPartonLevel0.fill(ncFinalPartonLevel0);
-    histcFinalPartonLevel1.fill(ncFinalPartonLevel1);
-    histcFinalPartonLevel2.fill(ncFinalPartonLevel2);
-    histcFinalPartonLevel3.fill(ncFinalPartonLevel3);
-    histcFinalPartonLevel4.fill(ncFinalPartonLevel4);
-    histcFinalPartonLevel5.fill(ncFinalPartonLevel5);
-    histcFinalPartonLevel6.fill(ncFinalPartonLevel6);
-    histcFinalPartonLevel7.fill(ncFinalPartonLevel7);
-    histcFinalPartonLevelAsym.fill(ncFinalPartonLevelAsym);
+      mult_parton_global[idx].fill(n_parton_glob[idx]);
+      mult_parton_pt5[idx].fill(n_parton_pt5[idx]);
+      mult_parton_pt10[idx].fill(n_parton_pt10[idx]);
 
-    histDmeson0.fill(nDmeson0);
-    histDmeson1.fill(nDmeson1);
-    histDmeson2.fill(nDmeson2);
-    histDmeson3.fill(nDmeson3);
-    histDmeson4.fill(nDmeson4);
-    histDmeson5.fill(nDmeson5);
-    histDmeson6.fill(nDmeson6);
-    histDmeson7.fill(nDmeson7);
-    histDmesonAsym.fill(nDmesonAsym);
+      mult_dmeson_global[idx].fill(n_dmeson_glob[idx]);
+      mult_dmeson_pt5[idx].fill(n_dmeson_pt5[idx]);
+      mult_dmeson_pt10[idx].fill(n_dmeson_pt10[idx]);
+    }
   }
-  std::string dirOutput = "../../Output/pO/Soft_pPb/eCM_" + eCM_str + "GeV/";
-  fs::create_directories(dirOutput);
 
-  // Salvando os histogramas corretamente com o método .table()
-  histcharmTotal0.table(dirOutput + "histcharmTotal0.dat");
-  histcharmTotal1.table(dirOutput + "histcharmTotal1.dat");
-  histcharmTotal2.table(dirOutput + "histcharmTotal2.dat");
-  histcharmTotal3.table(dirOutput + "histcharmTotal3.dat");
-  histcharmTotal4.table(dirOutput + "histcharmTotal4.dat");
-  histcharmTotal5.table(dirOutput + "histcharmTotal5.dat");
-  histcharmTotal6.table(dirOutput + "histcharmTotal6.dat");
-  histcharmTotal7.table(dirOutput + "histcharmTotal7.dat");
-  histcharmTotalAsym.table(dirOutput + "histcharmTotalAsym.dat");
+  // Normalização do dN/deta por número de eventos aceitos
+  if (nAcceptedEvents > 0)
+  {
+    double norm = 1.0 / double(nAcceptedEvents);
+    for (int i = 0; i < 9; ++i)
+    {
+      dNeta_charm_global[i] *= norm;
+      dNeta_charm_pt5[i] *= norm;
+      dNeta_charm_pt10[i] *= norm;
+      dNeta_parton_global[i] *= norm;
+      dNeta_parton_pt5[i] *= norm;
+      dNeta_parton_pt10[i] *= norm;
+      dNeta_dmeson_global[i] *= norm;
+      dNeta_dmeson_pt5[i] *= norm;
+      dNeta_dmeson_pt10[i] *= norm;
+    }
+  }
 
-  histcFinalPartonLevel0.table(dirOutput + "histcFinalPartonLevel0.dat");
-  histcFinalPartonLevel1.table(dirOutput + "histcFinalPartonLevel1.dat");
-  histcFinalPartonLevel2.table(dirOutput + "histcFinalPartonLevel2.dat");
-  histcFinalPartonLevel3.table(dirOutput + "histcFinalPartonLevel3.dat");
-  histcFinalPartonLevel4.table(dirOutput + "histcFinalPartonLevel4.dat");
-  histcFinalPartonLevel5.table(dirOutput + "histcFinalPartonLevel5.dat");
-  histcFinalPartonLevel6.table(dirOutput + "histcFinalPartonLevel6.dat");
-  histcFinalPartonLevel7.table(dirOutput + "histcFinalPartonLevel7.dat");
-  histcFinalPartonLevelAsym.table(dirOutput + "histcFinalPartonLevelAsym.dat");
+  // Salvamento estruturado nas pastas de pT
+  std::string baseOut = "../../Output/pO/Soft_pO/eCM_" + eCM_str + "GeV/";
+  std::string suffixes[9] = {"0", "1", "2", "3", "4", "5", "6", "7", "Asym"};
+  std::string ptFolders[3] = {"pt_gt_0GeV", "pt_gt_5GeV", "pt_gt_10GeV"};
 
-  histDmeson0.table(dirOutput + "histDmeson0.dat");
-  histDmeson1.table(dirOutput + "histDmeson1.dat");
-  histDmeson2.table(dirOutput + "histDmeson2.dat");
-  histDmeson3.table(dirOutput + "histDmeson3.dat");
-  histDmeson4.table(dirOutput + "histDmeson4.dat");
-  histDmeson5.table(dirOutput + "histDmeson5.dat");
-  histDmeson6.table(dirOutput + "histDmeson6.dat");
-  histDmeson7.table(dirOutput + "histDmeson7.dat");
-  histDmesonAsym.table(dirOutput + "histDmesonAsym.dat");
+  for (int t = 0; t < 3; ++t)
+  {
+    std::string dirOutput = baseOut + ptFolders[t] + "/";
+    fs::create_directories(dirOutput);
 
-  cout << "Simulação finalizada e arquivos salvos com sucesso e salvos em" + dirOutput + "!" << endl;
+    for (int i = 0; i < 9; ++i)
+    {
+      std::string suf = suffixes[i];
+
+      if (t == 0)
+      {
+        // Multiplicidade (mantém o nome original que você usava)
+        mult_charm_global[i].table(dirOutput + "histcharmTotal" + suf + ".dat");
+        mult_parton_global[i].table(dirOutput + "histcFinalPartonLevel" + suf + ".dat");
+        mult_dmeson_global[i].table(dirOutput + "histDmeson" + suf + ".dat");
+
+        // dN/deta (com prefixo diferenciado para a análise diferencial)
+        dNeta_charm_global[i].table(dirOutput + "dNeta_charmTotal" + suf + ".dat");
+        dNeta_parton_global[i].table(dirOutput + "dNeta_cFinalPartonLevel" + suf + ".dat");
+        dNeta_dmeson_global[i].table(dirOutput + "dNeta_Dmeson" + suf + ".dat");
+      }
+      else if (t == 1)
+      {
+        mult_charm_pt5[i].table(dirOutput + "histcharmTotal" + suf + ".dat");
+        mult_parton_pt5[i].table(dirOutput + "histcFinalPartonLevel" + suf + ".dat");
+        mult_dmeson_pt5[i].table(dirOutput + "histDmeson" + suf + ".dat");
+
+        dNeta_charm_pt5[i].table(dirOutput + "dNeta_charmTotal" + suf + ".dat");
+        dNeta_parton_pt5[i].table(dirOutput + "dNeta_cFinalPartonLevel" + suf + ".dat");
+        dNeta_dmeson_pt5[i].table(dirOutput + "dNeta_Dmeson" + suf + ".dat");
+      }
+      else
+      {
+        mult_charm_pt10[i].table(dirOutput + "histcharmTotal" + suf + ".dat");
+        mult_parton_pt10[i].table(dirOutput + "histcFinalPartonLevel" + suf + ".dat");
+        mult_dmeson_pt10[i].table(dirOutput + "histDmeson" + suf + ".dat");
+
+        dNeta_charm_pt10[i].table(dirOutput + "dNeta_charmTotal" + suf + ".dat");
+        dNeta_parton_pt10[i].table(dirOutput + "dNeta_cFinalPartonLevel" + suf + ".dat");
+        dNeta_dmeson_pt10[i].table(dirOutput + "dNeta_Dmeson" + suf + ".dat");
+      }
+    }
+  }
+
+  cout << "Simulação finalizada e arquivos salvos com sucesso e salvos em" + baseOut + "!" << endl;
 
   return 0;
 }

@@ -16,7 +16,7 @@ EXEC2 = Soft_pO
 SRC2 = Soft_pO.cc
 
 
-
+# O laço no terminal deve ser: for ecm in 5020 9620 13000; do ./Hard_pO $ecm done
 # Lista de todos os alvos (executáveis)
 EXECS = $(EXEC1) $(EXEC2) 
 
