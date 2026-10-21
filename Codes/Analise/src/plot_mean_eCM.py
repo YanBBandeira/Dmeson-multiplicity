@@ -132,7 +132,7 @@ for dinamica in ["Hard", "Soft"]:
                     bbox=dict(boxstyle="square,pad=0.3", fc="white", ec="none", alpha=0.8),
                 )
 
-                ax.legend(loc="upper left", fontsize=10, frameon=False)
+                ax.legend(loc="best", fontsize=10, frameon=False)
                 ax.grid(True, which="both", linestyle=":", alpha=0.4)
 
                 # Salvamento estruturado em subpastas organizadas por pT
