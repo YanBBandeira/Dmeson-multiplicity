@@ -73,8 +73,8 @@ pt_labels = {
 }
 
 eta_labels_clean = {
-    "0": r"|\eta| < 0.5",
-    "0.5": r"|\eta| < 0.5",
+    "0": r"$| \eta | < 0.5$",
+    "0.5": r"$|\eta| < 0.5$",
     "1": r"|\eta| < 1.0",
     "1.0": r"|\eta| < 1.0",
     "2": r"|\eta| < 2.0",
@@ -83,8 +83,8 @@ eta_labels_clean = {
     "3.0": r"|\eta| < 3.0",
     "4": r"|\eta| < 4.0",
     "4.0": r"|\eta| < 4.0",
-    "5": r"|\eta| < 5.0",
-    "5.0": r"|\eta| < 5.0",
+    "5": r"$|\eta| < 5.0$",
+    "5.0": r"$|\eta| < 5.0$",
 }
 
 # Fator m de 0 até 5
@@ -122,8 +122,8 @@ cores_sistemas = {
 # Diferentes estilos de linha para cada sistema
 styles_sistemas = {
     "pp": "-",  # Linha cheia
-    "pO": "-",  # Tracejada
-    "pPb": "-",  # Traço-ponto
+    "pO": "--",  # Tracejada
+    "pPb": "-.",  # Traço-ponto
 }
 
 # Diferentes marcadores para cada sistema
@@ -171,7 +171,9 @@ for corte in cortes_alvo:
 
         # 1. Sistema pp (Cor azul, linha cheia)
         sub_pp = sub_corte_df[
-            (sub_corte_df["sistema"] == "pp") & (sub_corte_df["corte_str"] == corte)
+           (sub_corte_df["sistema"] == "pp") 
+         & (sub_corte_df["corte_str"] == corte)
+         & (sub_corte_df["ecm"] == ecm)  # <-- O filtro de ecm que faltava!
         ].copy()
         if not sub_pp.empty:
             sub_pp["y_scaled"] = sub_pp["P_N"] * (10.0**m)
@@ -180,20 +182,14 @@ for corte in cortes_alvo:
             valid = yp > 0
             xp, yp = xp[valid], yp[valid]
             if len(yp) > 0:
-                ax.step(
-                    xp,
-                    yp,
-                    where="mid",
-                    color=cores_sistemas["pp"],
-                    linestyle=styles_sistemas["pp"],
-                    alpha=0.9,
-                )
                 ax.plot(
                     xp,
                     yp,
+                    drawstyle="steps-mid",
                     marker=markers_sistemas["pp"],
-                    linestyle="none",
                     color=cores_sistemas["pp"],
+                    linestyle=styles_sistemas["pp"],
+                    alpha=0.9,
                     markersize=5,
                 )
                 max_x_global = max(max_x_global, xp[-1])
@@ -204,7 +200,9 @@ for corte in cortes_alvo:
 
         # 2. Sistema pO (Cor verde, linha cheia)
         sub_po = sub_corte_df[
-            (sub_corte_df["sistema"] == "pO") & (sub_corte_df["corte_str"] == corte)
+            (sub_corte_df["sistema"] == "pO") 
+            & (sub_corte_df["corte_str"] == corte)
+            & (sub_corte_df["ecm"] == ecm)  
         ].copy()
 
         if not sub_po.empty:
@@ -214,22 +212,17 @@ for corte in cortes_alvo:
             valid = yp > 0
             xp, yp = xp[valid], yp[valid]
             if len(yp) > 0:
-                ax.step(
-                    xp,
-                    yp,
-                    where="mid",
-                    color=cores_sistemas["pO"],
-                    linestyle=styles_sistemas["pO"],
-                    alpha=0.9,
-                )
                 ax.plot(
                     xp,
                     yp,
+                    drawstyle="steps-mid",
                     marker=markers_sistemas["pO"],
-                    linestyle="none",
                     color=cores_sistemas["pO"],
+                    linestyle=styles_sistemas["pO"],
+                    alpha=0.9,
                     markersize=5,
                 )
+                
                 max_x_global = max(max_x_global, xp[-1])
                 global_ymin, global_ymax = min(global_ymin, np.min(yp)), max(
                     global_ymax, np.max(yp)
@@ -238,8 +231,9 @@ for corte in cortes_alvo:
 
         # 3. Sistema pPb (Cor vermelha, linha cheia)
         sub_ppb = sub_corte_df[
-            (sub_corte_df["sistema"] == "pPb")
-            & (sub_corte_df["corte_str"] == corte)
+               (sub_corte_df["sistema"] == "pPb") 
+                & (sub_corte_df["corte_str"] == corte)
+                & (sub_corte_df["ecm"] == ecm)  
         ].copy()
         if not sub_ppb.empty:
             sub_ppb["y_scaled"] = sub_ppb["P_N"] * (10.0**m)
@@ -248,20 +242,14 @@ for corte in cortes_alvo:
             valid = yp > 0
             xp, yp = xp[valid], yp[valid]
             if len(yp) > 0:
-                ax.step(
-                    xp,
-                    yp,
-                    where="mid",
-                    color=cores_sistemas["pPb"],
-                    linestyle=styles_sistemas["pPb"],
-                    alpha=0.9,
-                )
                 ax.plot(
                     xp,
                     yp,
+                    drawstyle="steps-mid",
                     marker=markers_sistemas["pPb"],
-                    linestyle="none",
                     color=cores_sistemas["pPb"],
+                    linestyle=styles_sistemas["pPb"],
+                    alpha=0.9,
                     markersize=5,
                 )
                 max_x_global = max(max_x_global, xp[-1])
@@ -313,11 +301,11 @@ for corte in cortes_alvo:
         ),
     ]
 
-    
+
     # Título da legenda indicando o corte de rapidez do arquivo atual
     info_titulo = (
         f"PYTHIA 8 / Angantyr\n"
-        f"$|\\eta| < {corte}$"
+        f"{eta_labels_clean[corte]}"
     )
 
     ax.legend(

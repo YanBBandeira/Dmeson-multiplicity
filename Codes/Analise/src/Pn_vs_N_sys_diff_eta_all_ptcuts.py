@@ -149,6 +149,7 @@ for sistema in sistemas:
         for pt_c in pt_cuts_disponiveis:
             sub_df = df[
                 (df["sistema"] == sistema)
+                & (df["ecm"] == 13000)
                 & (df["dinamica"] == dinamica)
                 & (df["observavel"] == obs["Dmeson"])
                 & (df["pt_cut"] == pt_c)

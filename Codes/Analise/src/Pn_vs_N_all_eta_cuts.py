@@ -114,8 +114,8 @@ cores_sistemas = {
 # Diferentes estilos de linha para cada sistema
 styles_sistemas = {
     "pp": "-",  # Linha cheia
-    "pO": "-",  # Tracejada
-    "pPb": "-",  # Traço-ponto
+    "pO": "--",  # Tracejada
+    "pPb": "-.",  # Traço-ponto
 }
 
 # Diferentes marcadores para cada sistema

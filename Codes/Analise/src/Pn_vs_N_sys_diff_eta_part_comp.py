@@ -144,7 +144,7 @@ dinamica = "Soft"
 
 sistemas = ["pp", "pO", "pPb"]
 cortes_alvo = ["0", "5"]  # ou "0" e "5" conforme seu dataframe
-
+ecm_fix = "1300"
 for sistema in sistemas:
     fig, ax = plt.subplots()
 
@@ -161,6 +161,7 @@ for sistema in sistemas:
                 & (df["dinamica"] == dinamica)
                 & (df["observavel"] == obs_atual)
                 & (df["pt_cut"] == pt_cut)
+                & (df["ecm"] == 13000)  # <-- Adicione esta linha para fixar em 13 TeV (ou o valor inteiro correspondente)
             ].copy()
 
             sub_df["corte_str"] = sub_df["corte_eta"].astype(str)
